@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title><%= htmltitle %></title>
+	</head>
+	<body>
+		<% if (header) { %>
+			<header>
+				<%- header %>
+			</header>
+		<% } %>
+		<nav>
+			<ul>
+				<% navlinks.forEach(el => { %>
+					<li><a href=<%= el.link %>><%= el.text %></a></li>
+				<% }); %>
+			</ul>
+		</nav>
+		<main>
+			<article>
+				<%- article %>
+			</article>
+		</main>
+		<% if (footer) { %>
+			<footer>
+				<%- footer %>
+			</footer>
+		<% } %>
+	</body>
+</html>
+			
