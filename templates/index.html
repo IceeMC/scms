@@ -4,7 +4,7 @@
 		<title><%= htmltitle %></title>
 	</head>
 	<body>
-		<% if (header) { %>
+		<% if (typeof header !== "undefined") { %>
 			<header>
 				<%- header %>
 			</header>
@@ -23,7 +23,7 @@
 				</article>
 			<% }); %>
 		</main>
-		<% if (footer) { %>
+		<% if (typeof footer !== "undefined") { %>
 			<footer>
 				<%- footer %>
 			</footer>
