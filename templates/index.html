@@ -19,7 +19,10 @@
 		<main>
 			<% articles.forEach(el => {%>
 				<article>
-					<%- el %>
+					<h1><%= el.title %></h1>
+					<%= el.author %> - <%= el.date %>
+					<br>
+					<%- el.article %>
 				</article>
 			<% }); %>
 		</main>
