@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title><%= htmltitle %></title>
+		<title><%= article.title %> - <%= htmltitle %></title>
+		<% css.forEach(el => { %>
+			<link rel="stylesheet" type="text/css" href="/css/<%= el %>">
+		<% }); %>
 	</head>
 	<body>
 		<% if (typeof header !== "undefined") { %>

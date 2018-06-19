@@ -1,0 +1,18 @@
+{
+	"htmltitle": "My blog",
+	"navlinks": [
+		{
+			"link": "https://google.com/",
+			"text": "google"
+		},
+		{
+			"link": "https://reddit.com/",
+			"text": "reddit"
+		},
+		{
+			"link": "https://youtube.com/",
+			"text": "youtube"
+		}
+	],
+	"footer": "Made by victor"
+}

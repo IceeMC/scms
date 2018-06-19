@@ -1,0 +1,10 @@
+body {
+	max-width: 60em;
+	margin: auto;
+}
+nav ul {
+	list-style: none;
+}
+nav ul li {
+	display: inline-block;
+}
