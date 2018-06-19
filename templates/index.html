@@ -15,14 +15,14 @@
 		<nav>
 			<ul>
 				<% navlinks.forEach(el => { %>
-					<li><a href=<%= el.link %>><%= el.text %></a></li>
+					<li><a href="<%= el.link %>"><%= el.text %></a></li>
 				<% }); %>
 			</ul>
 		</nav>
 		<main>
 			<% articles.forEach(el => {%>
 				<article>
-					<h1><%= el.title %></h1>
+					<h1><a href="/article/<%= el.id %>"><%= el.title %></a></h1>
 					<%= el.author %> - <%= el.date %>
 					<br>
 					<%- el.article %>

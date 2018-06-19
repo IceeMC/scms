@@ -9,8 +9,8 @@ module.exports = {
 		db.prepare("INSERT INTO articles (date, title, author, article) VALUES (:date, :title, :author, :article)")
 			.run({date, title, author, article});
 	},
-	getfive() {
-		return db.prepare("SELECT * FROM articles ORDER BY id DESC LIMIT 5").all();
+	get(num) {
+		return db.prepare("SELECT * FROM articles ORDER BY id DESC LIMIT :num").all({num});
 	},
 	getone(id) {
 		return db.prepare("SELECT * FROM articles WHERE id = :id").get({id});
