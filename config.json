@@ -14,5 +14,7 @@
 			"text": "youtube"
 		}
 	],
-	"footer": "Made by victor"
+	"footer": "Made by victor",
+
+	"saltRounds": 10
 }

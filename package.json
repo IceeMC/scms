@@ -9,6 +9,7 @@
   "author": "Victor Veytsman",
   "license": "MIT",
   "dependencies": {
+    "bcrypt": "^2.0.1",
     "better-sqlite3": "^4.1.4",
     "ejs": "^2.6.1",
     "express": "^4.16.3"
