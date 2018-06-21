@@ -20,7 +20,7 @@ module.exports = {
 	},
 
 	newuser(username, plainpw) {
-		if (db.prepare("SELECT * FROM users WHERE username = :username").all({username}).username) throw Error(`User ${username} already exists!`);
+		if (db.prepare("SELECT * FROM users WHERE username = :username").get({username})) throw Error(`User ${username} already exists!`);
 		bcrypt.hash(plainpw, config.saltRounds, (err, password) => {
 			if (err) throw err;
 			db.prepare("INSERT INTO users (username, password) VALUES (:username, :password)").run({username, password});
@@ -30,5 +30,18 @@ module.exports = {
 		let user = db.prepare("SELECT * FROM users WHERE username = :username").get({username});
 		if (!user) return new Promise(r=>r(false));
 		return bcrypt.compare(plainpw, user.password)
+	},
+	listusers() {
+		return db.prepare("SELECT username FROM users").all();
+	},
+	changepw(username, plainpw) {
+		if (!db.prepare("SELECT * FROM users WHERE username = :username").get({username})) throw Error(`User ${username} not found!`);
+		bcrypt.hash(plainpw, config.saltRounds, (err, password) => {
+			if (err) throw err;
+			db.prepare("UPDATE users SET password = :password WHERE username = :username");
+		});
+	},
+	deleteuser(username) {
+	 db.prepare("DELETE FROM users WHERE username = :username").run({username});
 	}
 };
