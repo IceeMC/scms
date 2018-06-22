@@ -19,9 +19,11 @@ function main() {
 		} else if (command === "adduser") {
 			rl.question("Enter a username: ", username => {
 				rl.question("Enter a password: ", password => {
-					db.newuser(username, password);
-					rl.write("User created\n");
-					main();
+					rl.question("Enter the name of the user: ", name => {
+						db.newuser(username, name, password);
+						rl.write("User created\n");
+						main();
+					});
 				});
 			});
 		} else if (command === "list") {

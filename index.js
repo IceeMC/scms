@@ -46,11 +46,11 @@ app.get("/api/articles/:num?", (req, res) => {
 });
 
 app.post("/api/insert", (req, res) => {
-	if (req.body && req.body.title && req.body.author && req.body.article && req.body.username && req.body.password) {
+	if (req.body && req.body.title && req.body.article && req.body.username && req.body.password) {
 		db.login(req.body.username, req.body.password).then(el => {
 			if (!el) res.sendStatus(400);
 			else {
-				db.insert(req.body.title, req.body.author, req.body.article);
+				db.insert(req.body.title, req.body.username, req.body.article);
 				res.json(db.get(1)[0]);
 			}
 		});

@@ -4,13 +4,14 @@ let db = new Database("./db.sqlite");
 let config = require("./config.json");
 
 db.prepare("CREATE TABLE IF NOT EXISTS articles (id INTEGER PRIMARY KEY AUTOINCREMENT, date INTEGER, title TEXT, author TEXT, article TEXT)").run();
-db.prepare("CREATE TABLE IF NOT EXISTS users (username TEXT UNIQUE PRIMARY KEY, password TEXT)").run();
+db.prepare("CREATE TABLE IF NOT EXISTS users (username TEXT UNIQUE PRIMARY KEY, password TEXT, name TEXT)").run();
 
 module.exports = {
-	insert(title, author, article) {
+	insert(title, username, article) {
 		let date = Math.floor(Date.now()/86400000);
-		db.prepare("INSERT INTO articles (date, title, author, article) VALUES (:date, :title, :author, :article)")
-			.run({date, title, author, article});
+		let name = db.prepare("SELECT name FROM users WHERE username = :username").get({username}).name;
+		db.prepare("INSERT INTO articles (date, title, author, article) VALUES (:date, :title, :name, :article)")
+			.run({date, title, name, article});
 	},
 	get(num) {
 		return db.prepare("SELECT * FROM articles ORDER BY id DESC LIMIT :num").all({num});
@@ -19,11 +20,11 @@ module.exports = {
 		return db.prepare("SELECT * FROM articles WHERE id = :id").get({id});
 	},
 
-	newuser(username, plainpw) {
+	newuser(username, name, plainpw) {
 		if (db.prepare("SELECT * FROM users WHERE username = :username").get({username})) throw Error(`User ${username} already exists!`);
 		bcrypt.hash(plainpw, config.saltRounds, (err, password) => {
 			if (err) throw err;
-			db.prepare("INSERT INTO users (username, password) VALUES (:username, :password)").run({username, password});
+			db.prepare("INSERT INTO users (username, name, password) VALUES (:username, :name, :password)").run({username, name, password});
 		});
 	},
 	login(username, plainpw) {
