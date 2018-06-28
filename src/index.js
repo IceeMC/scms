@@ -32,6 +32,8 @@ app.use((req, res, next) => {
 	});
 });
 
+app.use("/app", express.static("appviews"));//serve static files AFTER authenticator
+
 app.get("/", (req, res) => {
 	//get five articles and convert date to a readable format
 	let articles = db.get(5);
@@ -77,7 +79,7 @@ app.post("/api/insert", (req, res) => {
 	}
 });
 
-app.get("/app/login.html", (req, res) => res.sendFile("appviews/login.html", {root: __dirname}));
+//app.get("/app/login.html", (req, res) => res.sendFile("appviews/login.html", {root: __dirname}));
 
 app.post("/app/login", (req, res) => {
 	if (req.body && req.body.username && req.body.password) {
@@ -90,6 +92,19 @@ app.post("/app/login", (req, res) => {
 			res.send(String(el));
 		});
 	} else res.send("false");
+});
+
+app.post("/app/insert", (req, res) => {
+	if (req.body && req.body.title && req.body.article) {
+		if (req.session.username && req.session.password) {
+			db.login(req.session.username, req.session.password).then(el => { //just in case ;)
+				if (el) {
+					db.insert(req.body.title, req.session.username, req.body.article);
+					res.send("true");
+				} else res.status(500).send("You are not logged in correctly!");
+			});
+		} else res.status(401).send("You are not logged in correctly!");
+	} else res.status(400).send("Either the title or the article was missing");
 });
 
 app.listen(8080);

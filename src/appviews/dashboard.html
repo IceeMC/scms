@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Scms dashboard</title>
+		<style>
+			.article {
+				margin: 5px;
+				border: 1px solid lightgrey;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Scms dashboard</h1>
+		<a href="editor.html">New article</a>
+		<p>These are your current articles:</p>
+		<div id="articles"></div>
+		<script>
+			fetch("/api/articles").then(r => r.json()).then(articles => {
+				articles.forEach(article => {
+					let newDiv = document.createElement("div");
+					newDiv.className = "article";
+					newDiv.id = article.id;
+					let title = document.createElement("p");
+					title.innerText = article.title;
+					newDiv.innerHTML += `<a href="/article/${article.id}"><b>${title.innerHTML}</b></a>`;
+					let date = (new Date(article.date * 86400000)).toDateString();
+					newDiv.innerHTML += ` (${date}) - <a href='#'>Edit</a> | <a href='#'>Delete</a>`;
+					document.getElementById("articles").appendChild(newDiv);
+				});
+			});
+		</script>
+	</body>
+</html>
