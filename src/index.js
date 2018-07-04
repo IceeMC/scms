@@ -6,7 +6,7 @@ let express = require("express");
 let ejs = require("ejs");
 let session = require("express-session");
 
-//Local modules - database.js: API for the articles db; config.json: configuration file
+//Local modules - database.js: API for the articles and users db; config.json: configuration file
 let db = require("./database.js");
 let config = require("./config.json");
 
@@ -15,24 +15,6 @@ app.use(express.json());
 app.use(session({secret: config.secret}));
 let cssfiles = fs.readdirSync("./templates/css");//read which CSS files to use
 app.use("/css", express.static("templates/css"));//serve static CSS
-
-//make an authenticator
-app.use((req, res, next) => {
-	if (!req.path.startsWith("/app") || req.path.startsWith("/app/login")) {
-		next();
-		return;
-	}
-	if (!req.session.username || !req.session.password) {
-		res.redirect("/app/login.html");
-		return;
-	}
-	db.login(req.session.username, req.session.password).then(el => {
-		if (el) next();
-		else res.redirect("/app/login.html");
-	});
-});
-
-app.use("/app", express.static("appviews"));//serve static files AFTER authenticator
 
 app.get("/", (req, res) => {
 	//get five articles and convert date to a readable format
@@ -79,7 +61,33 @@ app.post("/api/insert", (req, res) => {
 	}
 });
 
-//app.get("/app/login.html", (req, res) => res.sendFile("appviews/login.html", {root: __dirname}));
+//make an authenticator
+app.use((req, res, next) => {
+	if (!req.path.startsWith("/app") || req.path.startsWith("/app/login")) {
+		next();
+		return;
+	}
+	if (!req.session.username || !req.session.password) {
+		res.redirect("/app/login.html");
+		return;
+	}
+	db.login(req.session.username, req.session.password).then(el => {
+		if (el) next();
+		else res.redirect("/app/login.html");
+	});
+});
+
+app.get("/app/editeditor.html", (req, res) => {
+	if (req.query.id) {
+		let data = db.getone(req.query.id);
+		ejs.renderFile("appviews/editeditor.html", {...data, id: req.query.id}, (err, editeditor) => {
+			if (err) throw err;
+			res.send(editeditor);
+		});
+	} else res.status(400).send("No ID provided");
+});
+
+app.use("/app", express.static("appviews"));//serve static files AFTER authenticator
 
 app.post("/app/login", (req, res) => {
 	if (req.body && req.body.username && req.body.password) {
@@ -101,10 +109,36 @@ app.post("/app/insert", (req, res) => {
 				if (el) {
 					db.insert(req.body.title, req.session.username, req.body.article);
 					res.send("true");
-				} else res.status(500).send("You are not logged in correctly!");
+				} else res.status(401).send("You are not logged in correctly!");
 			});
 		} else res.status(401).send("You are not logged in correctly!");
 	} else res.status(400).send("Either the title or the article was missing");
+});
+
+app.post("/app/delete", (req, res) => {
+	if (req.body && req.body.id) {
+		if (req.session.username && req.session.password) {
+			db.login(req.session.username, req.session.password).then(el => {
+				if (el) {
+					db.delete(req.body.id);
+					res.send("true");
+				} else res.status(401).send("You are not logged in correctly!");
+			});
+		} else res.status(401).send("You are not logged in correctly!");
+	} else res.status(400).send("You have sent the wrong id!");
+});
+
+app.post("/app/edit", (req, res) => {
+	if (req.body && req.body.id && req.body.title && req.body.article) {
+		if (req.session.username && req.session.password) {
+			db.login(req.session.username, req.session.password).then(el => {
+				if (el) {
+					db.edit(req.body.id, req.body.title, req.body.article);
+					res.send("true");
+				} else res.status(401).send("You are not logged in correctly!");
+			});
+		} else res.status(401).send("You are not logged in correctly!");
+	} else res.status(400).send("Either the ID, article, or title are missing");
 });
 
 app.listen(8080);

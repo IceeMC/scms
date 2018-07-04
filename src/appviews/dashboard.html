@@ -24,10 +24,26 @@
 					title.innerText = article.title;
 					newDiv.innerHTML += `<a href="/article/${article.id}"><b>${title.innerHTML}</b></a>`;
 					let date = (new Date(article.date * 86400000)).toDateString();
-					newDiv.innerHTML += ` (${date}) - <a href='#'>Edit</a> | <a href='#'>Delete</a>`;
+					newDiv.innerHTML += ` (${date}) - <a href='editeditor.html?id=${article.id}'>Edit</a> | <a href='#' onClick='delet(this)'>Delete</a>`;
 					document.getElementById("articles").appendChild(newDiv);
 				});
 			});
+			function delet(el) {
+				if (!confirm("Are you sure you would like to delete this article?")) return;
+				fetch("/app/delete", {
+					method: "POST",
+					body: JSON.stringify({
+						id: el.parentNode.id
+					}),
+					credentials: "same-origin",
+					headers: {"Content-Type": "application/json"}
+				}).then(r => r.text()).then(r => {
+					if (r === "true") {
+						alert("Article successfully deleted");
+						window.location.reload();
+					} else alert("There was a problem deleting this article");
+				});
+			}
 		</script>
 	</body>
 </html>

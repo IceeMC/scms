@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>New article - scms</title>
+		<style>
+			textarea {
+				width: 60em;
+				height: 35em;
+			}
+			body, html {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+			}
+			body {
+				padding: 10px;
+				box-sizing: border-box;
+			}
+			h1 {
+				margin: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Editing article "<%= title %>" - scms</h1>
+		Title: <input id="title" value="<%= title %>"><br>
+		HTML Article:<br>
+		<textarea id="article"><%= article %></textarea><br>
+		<button onClick="submit()">Submit</button>
+		<script>
+			function submit() {
+				fetch("/app/edit", {
+					method: "POST",
+					body: JSON.stringify({
+						title: document.getElementById("title").value,
+						article: document.getElementById("article").value,
+						id: <%= id %> //using ejs in js
+					}),
+					credentials: "same-origin",
+					headers: {"Content-Type": "application/json"}
+				}).then(r => r.text()).then(r => {
+					if (r === "true") window.location.href = "./dashboard.html";
+					else alert("There was an error in submitting your article: " + r);
+				});
+			}
+		</script>
+	</body>
+</html>
