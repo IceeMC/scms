@@ -23,6 +23,7 @@
 	</head>
 	<body>
 		<h1>Editing article "<%= title %>" - scms</h1>
+		(This article is <%= markdown ? "" : "not" %> markdown)
 		Title: <input id="title" value="<%= title %>"><br>
 		HTML Article:<br>
 		<textarea id="article"><%= article %></textarea><br>

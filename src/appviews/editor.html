@@ -26,14 +26,15 @@
 		Title: <input id="title"><br>
 		HTML Article:<br>
 		<textarea id="article"></textarea><br>
-		<button onClick="submit()">Submit</button>
+		Markdown: <input id="markdown" type="checkbox"> <button onClick="submit()">Submit</button>
 		<script>
 			function submit() {
 				fetch("/app/insert", {
 					method: "POST",
 					body: JSON.stringify({
 						title: document.getElementById("title").value,
-						article: document.getElementById("article").value
+						article: document.getElementById("article").value,
+						markdown: document.getElementById("markdown").checked
 					}),
 					credentials: "same-origin",
 					headers: {"Content-Type": "application/json"}

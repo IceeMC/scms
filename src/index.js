@@ -52,7 +52,7 @@ app.post("/api/insert", (req, res) => {
 		db.login(req.body.username, req.body.password).then(el => {
 			if (!el) res.sendStatus(400);
 			else {
-				db.insert(req.body.title, req.body.username, req.body.article);
+				db.insert(req.body.title, req.body.username, req.body.article, req.body.markdown ? 1 : 0);
 				res.json(db.get(1)[0]);
 			}
 		});
@@ -107,7 +107,7 @@ app.post("/app/insert", (req, res) => {
 		if (req.session.username && req.session.password) {
 			db.login(req.session.username, req.session.password).then(el => { //just in case ;)
 				if (el) {
-					db.insert(req.body.title, req.session.username, req.body.article);
+					db.insert(req.body.title, req.session.username, req.body.article, req.body.markdown ? 1 : 0);
 					res.send("true");
 				} else res.status(401).send("You are not logged in correctly!");
 			});
