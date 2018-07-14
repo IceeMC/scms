@@ -35,6 +35,9 @@ module.exports = {
 	getone(id) {
 		return db.prepare("SELECT * FROM articles WHERE id = :id").get({id});
 	},
+	getall() {
+		return db.prepare("SELECT * FROM articles ORDER BY id DESC").all();
+	},
 	//user API
 	newuser(username, name, plainpw) {
 		if (db.prepare("SELECT * FROM users WHERE username = :username").get({username})) throw Error(`User ${username} already exists!`);

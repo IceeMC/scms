@@ -27,9 +27,13 @@ app.get("/", (req, res) => {
 	});
 });
 
-app.get("/article/:id", (req, res) => {
+app.get("/article/:id", (req, res, next) => {
 	//get the article you want and convert date to a readable format
 	let data = db.getone(req.params.id);
+	if (!data) {
+		next(); //404
+		return;
+	}
 	data.date = (new Date(data.date * 86400000)).toDateString();
 	//render file with config and articles
 	ejs.renderFile("templates/article.html", {...config, article: data, css: cssfiles}, (err, article) => {
@@ -40,11 +44,17 @@ app.get("/article/:id", (req, res) => {
 
 app.get("/api/article/:id", (req, res) => {
 	//get the article you want and send it
+	let data = db.getone(req.params.id);
+	if (!data) {
+		res.sendStatus(404);
+		return;
+	}
 	res.json(db.getone(req.params.id));
 });
 
 app.get("/api/articles/:num?", (req, res) => {
-	res.json(db.get(req.params.num || 5));
+	if (req.params.num) res.json(db.get(req.params.num));
+	else res.json(db.getall());
 });
 
 app.post("/api/insert", (req, res) => {
@@ -140,5 +150,9 @@ app.post("/app/edit", (req, res) => {
 		} else res.status(401).send("You are not logged in correctly!");
 	} else res.status(400).send("Either the ID, article, or title are missing");
 });
+
+app.use("/", express.static("views"));
+
+app.all("*", (req, res) => res.status(404).sendFile("templates/404.html", {root: __dirname}));
 
 app.listen(8080);

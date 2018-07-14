@@ -7,6 +7,9 @@
 				margin: 5px;
 				border: 1px solid lightgrey;
 			}
+			.delet {
+				color: blue;
+			}
 		</style>
 	</head>
 	<body>
@@ -24,7 +27,7 @@
 					title.innerText = article.title;
 					newDiv.innerHTML += `<a href="/article/${article.id}"><b>${title.innerHTML}</b></a>`;
 					let date = (new Date(article.date * 86400000)).toDateString();
-					newDiv.innerHTML += ` (${date}) - <a href='editeditor.html?id=${article.id}'>Edit</a> | <a href='#' onClick='delet(this)'>Delete</a>`;
+					newDiv.innerHTML += ` (${date}) - <a href='editeditor.html?id=${article.id}'>Edit</a> | <a class="delet" href='#' onClick='delet(this)'>Delete</a>`;
 					document.getElementById("articles").appendChild(newDiv);
 				});
 			});
