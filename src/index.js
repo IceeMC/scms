@@ -8,7 +8,7 @@ let session = require("express-session");
 
 //Local modules - database.js: API for the articles and users db; config.json: configuration file
 let db = require("./database.js");
-let config = require("./config.json");
+let config = require("./config");//require without extension for js OR json
 
 let app = express();//setup express
 app.use(express.json());
@@ -20,8 +20,9 @@ app.get("/", (req, res) => {
 	//get five articles and convert date to a readable format
 	let articles = db.get(5);
 	articles.forEach(el => el.date = (new Date(el.date * 86400000)).toDateString());
+	co
 	//render file with config and articles
-	ejs.renderFile("templates/index.html", {...config, articles, css: cssfiles}, (err, index) => {
+	ejs.renderFile("templates/index.html", {htmltitle, articles}, (err, index) => {
 		if (err) throw err;
 		res.send(index);
 	});
@@ -155,4 +156,4 @@ app.use("/", express.static("views"));
 
 app.all("*", (req, res) => res.status(404).sendFile("templates/404.html", {root: __dirname}));
 
-app.listen(8080);
+app.listen(config.port);

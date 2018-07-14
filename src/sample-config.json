@@ -1,0 +1,8 @@
+{
+	"htmltitle": "My blog",
+	
+	"saltRounds": 10,
+	"secret": "testing for now man",
+
+	"port": 8080
+}

@@ -2,21 +2,19 @@
 <html>
 	<head>
 		<title><%= article.title %> - <%= htmltitle %></title>
-		<% css.forEach(el => { %>
-			<link rel="stylesheet" type="text/css" href="/css/<%= el %>">
-		<% }); %>
+		<link rel="stylesheet" type="text/css" href="css/css.css">
 	</head>
 	<body>
-		<% if (typeof header !== "undefined") { %>
-			<header>
-				<%- header %>
-			</header>
-		<% } %>
+		<!-- If you want a header, delete this comment and put it here
+		<header>
+		</header>
+		-->
 		<nav>
 			<ul>
-				<% navlinks.forEach(el => { %>
-					<li><a href=<%= el.link %>><%= el.text %></a></li>
-				<% }); %>
+				<!-- Navigation links template
+					<li><a href="LINK">TEXT</a></li>
+				-->
+				<li><a href="/">Home</a></li>
 			</ul>
 		</nav>
 		<main>
@@ -27,11 +25,10 @@
 				<%- article.rendered %>
 			</article>
 		</main>
-		<% if (typeof footer !== "undefined") { %>
-			<footer>
-				<%- footer %>
-			</footer>
-		<% } %>
+		<!-- If you want a footer, delete this comment and put it here
+		<footer>
+		</footer>
+		-->
 	</body>
 </html>
 			
