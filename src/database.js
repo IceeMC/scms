@@ -13,7 +13,7 @@ module.exports = {
 		let date = Math.floor(Date.now()/86400000);
 		let name = db.prepare("SELECT name FROM users WHERE username = :username").get({username}).name;
 		let rendered = article;
-		if (markdown.markdown) rendered = marked(article);
+		if (markdown) rendered = marked(article);
 		db.prepare(`INSERT INTO articles (date, title, author, article, rendered, markdown)
 		VALUES (:date, :title, :name, :article, :rendered, :markdown)`)
 			.run({date, title, name, article, rendered, markdown});
@@ -21,7 +21,7 @@ module.exports = {
 	edit(id, title, article) {
 		let rendered = article;
 		let markdown = db.prepare("SELECT markdown FROM articles WHERE id = :id").get({id});
-		if (markdown.markdown) rendered = marked(article);
+		if (markdown) rendered = marked(article);
 		db.prepare("UPDATE articles SET title = :title, article = :article, rendered = :rendered WHERE id = :id")
 			.run({title, article, rendered, id});
 	},

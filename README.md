@@ -44,7 +44,7 @@ Tada! Now that you are set up with the basics, move on to usage to see how it wo
 ## Usage
 
 ### Managing users
-You can manage users by running `node cli.js` in the `src/` folder. I think that the help page is pretty self-explanatory. 
+You can manage users by running `node cli.js` in the `src/` folder. I think that the help page is pretty self-explanatory.
 
 ### Running the service
 ```
@@ -57,4 +57,36 @@ tada! If you use the default config, you can go to `localhost:8080` to view the 
 You can go to `<domain>/app/login.html` (where `<domain>` is the domain you are running it on) to log in (provided you set up a user, see `Managing users`) and then `<domain>/app/dashboard.html` to make, edit, and delete them
 
 ### Using the API
-The API is still a work in progress so there is no documentation for it yet.
+
+#### Getting articles
+
+| Request verb | Path | Use |
+| --- | --- | --- |
+| GET | `/api/article/:id` | will get a specific article, where `:id` is replaced with the ID of the article |
+| GET | `/api/articles/:num?` | will get any number of the most recent articles (put into an array), where `:num?` is an optional property denotating how many articles to fetch---in absence of this property, all articles are fetched |
+
+A single article will look something like this:
+
+```json
+{
+	"id": 4,
+	"date": 17772,
+	"title": "Testing out the API!",
+	"author": "George Georginson",
+	"article": "Wow, look at me! Testing the api out like I am! Let's try some...\n\n### Markdown!",
+	"rendered": "<p>Wow, look at me! Testing the api out like I am! Let&#39;s try some...</p>\n<h3 id=\"markdown-\">Markdown!</h3>\n<p>damn I hope it worked lol</p>\n",
+	"markdown": 1
+}
+```
+
+The only things of note here are the date, which is simply the number of days since the epoch that the article was written, and the markdown property, which reffers to whether the article is markdown or not. In the event that the article is not markdown, the rendered property and article property will have the same value.
+
+#### Inserting, deleting, and editing articles
+
+**All of these methods** must have a valid [basic Authorization header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization) with the username and password of the person inserting, deleting, and editing articles.
+
+| Request verb | Path | Use |
+| --- | --- | --- |
+| POST | `/api/insert` | Use with a JSON body (and a `Content-Type` header set to `application/json`. The JSON body must contain the keys `title` and `article` with the values of... well... the title and article of the article you're inserting. You may also add an optional `markdown` property which should be truthy if `article` is written in markdown. Once the article is inserted into the database, it will be returned to you in JSON form as if you had requested it with the methods above |
+| DELETE | `/api/delete/:id` | will delete a specific article, where `:id` is replaced with the ID of the article you want to delete. Will respond with `"Successfully Deleted."` upon success. |
+| PUT | `/edit/:id` | Use in the same manner as `/api/insert` except with no `markdown` key (the `markdown` property will be the same as when the article was inserted) and with `:id` in the URL replaced with the `id` of the article you want to edit. Will respond with `"Successfully Edited."` upon success. |
