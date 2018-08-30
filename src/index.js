@@ -1,10 +1,12 @@
 //Native modules - fs: read the css dir and see which files to add
 let fs = require("fs");
 
-//Imported modules - express: serve site; ejs: render HTML files; express-session: make sessions
+//Imported modules - express: serve site; ejs: render HTML files; express-session: make sessions; helmet: protect express from HTTP header vulnerabilities
 let express = require("express");
 let ejs = require("ejs");
 let session = require("express-session");
+let helmet = require("helmet");
+let RateLimiter = require("express-rate-limit");
 
 //Local modules - database.js: API for the articles and users db; config.json: configuration file; api.js: api router
 let db = require("./database.js");
@@ -12,6 +14,13 @@ let config = require("./config");//require without extension for js OR json
 let api = require("./api.js");
 
 let app = express();//setup express
+//set up middleware to rate limit
+let limiter = new RateLimiter({
+	windowMs: 1000,
+	max: 2
+});//1 request per second
+app.use(limiter);
+app.use(helmet());
 app.use(express.json());
 app.use(session({secret: config.secret}));
 let cssfiles = fs.readdirSync("./templates/css");//read which CSS files to use

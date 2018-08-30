@@ -53,6 +53,10 @@ $ node index.js
 ```
 tada! If you use the default config, you can go to `localhost:8080` to view the thing
 
+### Running the service in production
+
+While scms already has methods in place for running the app in production, it is recommended that you use a reverse proxy to handle things. This makes your application *much safer*. I recommend [nginx](https://www.nginx.com/) for your reverse proxy because it is very fast and relatively easy to configure and use. There are some guides on how to configure nginx to be a reverse proxy for a node.js application online, like [this one](https://medium.com/@utkarsh_verma/configure-nginx-as-a-web-server-and-reverse-proxy-for-nodejs-application-on-aws-ubuntu-16-04-server-872922e21d38).
+
 ### Using the web interface
 You can go to `<domain>/app/login.html` (where `<domain>` is the domain you are running it on) to log in (provided you set up a user, see `Managing users`) and then `<domain>/app/dashboard.html` to make, edit, and delete them
 

@@ -66,6 +66,8 @@ app.put("/edit/:id", (req, res) => {
 	});
 });
 
+app.all("*", (req, res) => res.sendStatus(404));
+
 //test the Authentication header to make sure it's good
 
 function testAuth(auth) {
