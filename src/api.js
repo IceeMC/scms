@@ -29,7 +29,7 @@ app.post("/insert", (req, res) => {
 	let auth = req.get("Authorization");
 	testAuth(auth).then((username) => {
 		if (req.body && req.body.title && req.body.article) {
-			db.insert(req.body.title, username, req.body.article, req.body.markdown ? 1 : 0);
+			db.insert(req.body.title, username, req.body.article, req.body.markdown ? 1 : 0, req.body.published ? 1 : 0);
 			res.json(db.get(1)[0]);
 		} else res.sendStatus(400);
 	}).catch(httpCode => {

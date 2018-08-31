@@ -17,7 +17,7 @@ let app = express();//setup express
 //set up middleware to rate limit
 let limiter = new RateLimiter({
 	windowMs: 1000,
-	max: 2
+	max: 5
 });//1 request per second
 app.use(limiter);
 app.use(helmet());
@@ -81,7 +81,32 @@ app.get("/app/editeditor.html", (req, res) => {
 	} else res.status(400).send("No ID provided");
 });
 
+app.get("/app/dashboard.html", (req, res) => {
+	let articles = db.getallunpublished();
+	articles.forEach(el => el.date = (new Date(el.date * 86400000)).toDateString());
+	ejs.renderFile("appviews/dashboard.html", {articles}, (err, rendered) => {
+		if (err) throw err;
+		res.send(rendered);
+	});
+});
+
 app.use("/app", express.static("appviews"));//serve static files AFTER authenticator
+
+app.get("/app/article/:id", (req, res, next) => {
+	//get the article you want and convert date to a readable format
+	let data = db.getoneunpublished(req.params.id);
+	if (!data) {
+		next(); //404
+		return;
+	}
+	data.date = (new Date(data.date * 86400000)).toDateString();
+	//render file with config and articles
+	if (!data.published) data.title = "UNPUBLISHED - " + data.title;
+	ejs.renderFile("templates/article.html", {...config, article: data, css: cssfiles}, (err, article) => {
+		if (err) throw err;
+		res.send(article);
+	});
+});
 
 app.post("/app/login", (req, res) => {
 	if (req.body && req.body.username && req.body.password) {
@@ -96,12 +121,26 @@ app.post("/app/login", (req, res) => {
 	} else res.send("false");
 });
 
+app.post("/app/publish", (req, res) => {
+	if (req.body && req.body.id) {
+		if (req.session.username && req.session.password) {
+			db.login(req.session.username, req.session.password).then(el => {
+				if (el) {
+					db.publish(req.body.id);
+					res.send("true");
+				} else res.status(401).send("You are not logged in correctly!");
+			});
+		} else res.status(401).send("You are not logged in correctly!");
+	} else res.status(400).send("You haven't sent an ID to publish!");
+});
+
 app.post("/app/insert", (req, res) => {
 	if (req.body && req.body.title && req.body.article) {
 		if (req.session.username && req.session.password) {
 			db.login(req.session.username, req.session.password).then(el => { //just in case ;)
 				if (el) {
-					db.insert(req.body.title, req.session.username, req.body.article, req.body.markdown ? 1 : 0);
+					db.insert(req.body.title, req.session.username, req.body.article, req.body.markdown ? 1 : 0, 0);
+					//the last 0 is because articles aren't automatically published
 					res.send("true");
 				} else res.status(401).send("You are not logged in correctly!");
 			});
