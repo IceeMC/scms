@@ -38,7 +38,13 @@
 					}),
 					credentials: "same-origin",
 					headers: {"Content-Type": "application/json"}
-				}).then(r => r.text()).then(r => {
+				}).then(r => {
+					if (r.redirected) {
+						window.location.href = "/app/login.html";
+						return "You are not logged in";
+					}
+					return r.text()
+				}).then(r => {
 					if (r === "true") window.location.href = "./dashboard.html";
 					else alert("There was an error in submitting your article: " + r);
 				});

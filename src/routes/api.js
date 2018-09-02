@@ -2,7 +2,7 @@
 let express = require("express");
 
 //Local modules - database.js: API for the articles
-let db = require("./database.js");
+let db = require("../database.js");
 
 let app = express.Router(); //make a router
 app.use(express.json());
