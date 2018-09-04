@@ -1,12 +1,13 @@
 //Native modules - fs: read the css dir and see which files to add
 let fs = require("fs");
 
-//Imported modules - express: serve site; ejs: render HTML files; express-session: make sessions; helmet: protect express from HTTP header vulnerabilities
+//Imported modules - express: serve site; ejs: render HTML files; express-session: make sessions; helmet: protect express from HTTP header vulnerabilities; xss: sanitize untrusted HTML to prevent XSS attacks
 let express = require("express");
 let ejs = require("ejs");
 let session = require("express-session");
 let helmet = require("helmet");
 let RateLimiter = require("express-rate-limit");
+let xss = require("xss");
 
 //Local modules - database.js: API for the articles and users db; config.json: configuration file; api.js: api router
 let db = require("./database.js");
@@ -46,8 +47,10 @@ app.get("/article/:id", (req, res, next) => {
 		return;
 	}
 	data.date = (new Date(data.date * 86400000)).toDateString();
+	//get the comments
+	let comments = db.getcomments(req.params.id);
 	//render file with config and articles
-	ejs.renderFile("templates/article.html", {...config, article: data, css: cssfiles}, (err, article) => {
+	ejs.renderFile("templates/article.html", {...config, article: data, css: cssfiles, comments}, (err, article) => {
 		if (err) throw err;
 		res.send(article);
 	});
@@ -62,6 +65,19 @@ app.get("/archive", (req, res) => {
 		if (err) throw err;
 		res.send(archive);
 	});
+});
+
+app.post("/comment", (req, res) => {
+	if (req.body && req.body.comment && req.body.id) {
+		if (!req.body.name) req.body.name = "Anonymous";
+		if (!db.get(req.body.id)) {
+			res.status(404).send("An article with that ID was not found");
+			return;
+		}
+		req.body.comment = xss(req.body.comment);
+		db.comment(req.body.id, req.body.name, req.body.comment);
+		res.send("true");
+	} else res.status(400).send("No comment present!");
 });
 
 //API (see api.js)

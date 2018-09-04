@@ -24,11 +24,40 @@
 				<br>
 				<%- article.rendered %>
 			</article>
+			<h2>Comment</h2>
+			Name (optional): <input id="name" /><br>
+			Comment (Markdown supported!):<br>
+			<textarea id="comment"></textarea><br>
+			<button onClick="submitComment()">Submit</button>
+			<h3>Other comments</h3>
+			<hr>
+			<% comments.forEach(comment => { %>
+				<h4><%= comment.name %></h4>
+				<%- comment.comment %>
+				<hr>
+			<% }); %>
 		</main>
 		<!-- If you want a footer, delete this comment and put it here
 		<footer>
 		</footer>
 		-->
+		<script>
+			function submitComment() {
+				fetch("/comment", {
+					method: "POST",
+					body: JSON.stringify({
+						id: <%= article.id %>,
+						name: document.getElementById("name").value,
+						comment: document.getElementById("comment").value
+					}),
+					credentials: "same-origin",
+					headers: {"Content-Type": "application/json"}
+				}).then(r => r.text()).then(r => {
+					if (r === "true") window.location.reload();
+					else alert("There was an error in writing your comment: " + r);
+				});
+			}
+		</script>
 	</body>
 </html>
 

@@ -7,6 +7,7 @@ let config = require("./config.json");
 db.prepare(`CREATE TABLE IF NOT EXISTS articles
 (id INTEGER PRIMARY KEY AUTOINCREMENT, date INTEGER, title TEXT, author TEXT, article TEXT, rendered TEXT, markdown INTEGER, published INTEGER)`).run();
 db.prepare("CREATE TABLE IF NOT EXISTS users (username TEXT UNIQUE PRIMARY KEY, password TEXT, name TEXT)").run();
+db.prepare("CREATE TABLE IF NOT EXISTS comments (id INTEGER PRIMARY KEY AUTOINCREMENT, articleID INTEGER, name TEXT, comment TEXT)").run();
 
 module.exports = {
 	//inserting, editing, and deleting
@@ -47,6 +48,15 @@ module.exports = {
 	},
 	getoneunpublished(id) {
 		return db.prepare("SELECT * FROM articles WHERE id = :id").get({id});
+	},
+
+	//commenting
+	comment(id, name, comment) {
+		comment = marked(comment);
+		db.prepare("INSERT INTO comments (articleID, name, comment) VALUES (:id, :name, :comment)").run({id, name, comment});
+	},
+	getcomments(id) {
+		return db.prepare("SELECT * FROM comments WHERE articleID = :id ORDER BY id DESC").all({id});
 	},
 
 	//user API
