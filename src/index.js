@@ -53,6 +53,17 @@ app.get("/article/:id", (req, res, next) => {
 	});
 });
 
+app.get("/archive", (req, res) => {
+	//get all of the articles and convert date to a readable format
+	let articles = db.getall();
+	articles.forEach(el => el.date = (new Date(el.date * 86400000)).toDateString());
+	//render file with config and articles
+	ejs.renderFile("templates/archive.html", {htmltitle: config.htmltitle, articles}, (err, archive) => {
+		if (err) throw err;
+		res.send(archive);
+	});
+});
+
 //API (see api.js)
 app.use("/api", api);
 
