@@ -4,6 +4,16 @@ A Simple Content Management System aimed at web developers.
 ## Aim
 The aim of this project is to give existing web developers a simple, light platform for simple content management, while being as flexible as possible. This means that you can make your own theme from the ground up with little in your way while using the web interface to create articles instead of having to ssh to a server and write everything raw.
 
+## Features
+
+* Works out of the box
+* Contains security features like a rate limiter and Helmet
+* An API *and* a web interface
+* Comments with moderator functionality
+* Drafts and article editing
+* Multiple users
+* 100% customizable everything
+
 ## Configuration
 
 ### config.json/config.js
@@ -12,7 +22,8 @@ The aim of this project is to give existing web developers a simple, light platf
 | htmltitle | The title that goes in the <title> element on the main pages |
 | saltrounds | A [bcrypt](https://npmjs.com/bcrypt) option; bcrypt is used for the user interface |
 | secret | ^ |
-| port | The port that the service runs on. This doesn't support https because it is recommended that you use a reverse proxy |
+| port | The port that the service runs on. If you aren't using a reverse proxy, then set this value to `80` |
+| https | An **optional** object that has three values: key, cert, and port. The port is the port that the https server should listen on (`443` for a normal https server), and the key and cert should be the path to the key and cert files of the https certificate |
 
 ### Templates
 The templates, in the `src/templates` folder, are created to be easy and simple to configure. They use [ejs](https://ejs.co) templates; here is what is exposed:
@@ -29,6 +40,9 @@ The templates, in the `src/templates` folder, are created to be easy and simple 
 | rendered | The *rendered* HTML for the article |
 | markdown | A number; 0 means that the article is raw HTML, 1 means it uses markdown |
 * `htmltitle` - The title of the scms
+
+### serving static files
+You can place any file in the `src/static` folder to have it display on the website. For example, if you put `about.html` in the static folder, it will show as `<domain>/about.html` on your website.
 
 ## Setup
 To set this up, follow these simple steps:

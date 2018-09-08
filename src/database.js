@@ -65,7 +65,7 @@ module.exports = {
 	//user API
 	newuser(username, name, plainpw) {
 		if (db.prepare("SELECT * FROM users WHERE username = :username").get({username})) throw Error(`User ${username} already exists!`);
-		bcrypt.hash(plainpw, config.saltRounds, (err, password) => {
+		bcrypt.hash(plainpw, config.saltRounds || 10, (err, password) => {
 			if (err) throw err;
 			db.prepare("INSERT INTO users (username, name, password) VALUES (:username, :name, :password)").run({username, name, password});
 		});
@@ -80,7 +80,7 @@ module.exports = {
 	},
 	changepw(username, plainpw) {
 		if (!db.prepare("SELECT * FROM users WHERE username = :username").get({username})) throw Error(`User ${username} not found!`);
-		bcrypt.hash(plainpw, config.saltRounds, (err, password) => {
+		bcrypt.hash(plainpw, config.saltRounds || 10, (err, password) => {
 			if (err) throw err;
 			db.prepare("UPDATE users SET password = :password WHERE username = :username");
 		});

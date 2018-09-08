@@ -1,5 +1,7 @@
-//Native modules - fs: read the css dir and see which files to add
+//Native modules - fs: read the css dir and see which files to add; http and https: make the server listen, and with configuration options
 let fs = require("fs");
+let http = require("http");
+let https = require("https");
 
 //Imported modules - express: serve site; ejs: render HTML files; express-session: make sessions; helmet: protect express from HTTP header vulnerabilities; xss: sanitize untrusted HTML to prevent XSS attacks
 let express = require("express");
@@ -84,8 +86,14 @@ app.use("/api", api);
 
 app.use("/app", approuter);
 
-app.use("/", express.static("views"));
+app.use("/", express.static("static"));
 
 app.all("*", (req, res) => res.status(404).sendFile("templates/404.html", {root: __dirname}));
 
-app.listen(config.port);
+http.createServer(app).listen(config.port);
+if (config.https) {
+	https.createServer({
+		key: fs.readFileSync(config.https.key, "utf8"),
+		cert: fs.readFileSync(config.https.cert, "utf8")
+	}).listen(config.https.port);
+}
