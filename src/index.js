@@ -25,7 +25,6 @@ app.use(limiter);
 app.use(helmet());
 app.use(express.json());
 app.use(session({secret: config.secret}));
-let cssfiles = fs.readdirSync("./templates/css");//read which CSS files to use
 app.use("/css", express.static("templates/css"));//serve static CSS
 
 app.get("/", (req, res) => {
@@ -50,7 +49,7 @@ app.get("/article/:id", (req, res, next) => {
 	//get the comments
 	let comments = db.getcomments(req.params.id);
 	//render file with config and articles
-	ejs.renderFile("templates/article.html", {...config, article: data, css: cssfiles, comments}, (err, article) => {
+	ejs.renderFile("templates/article.html", {...config, article: data, comments}, (err, article) => {
 		if (err) throw err;
 		res.send(article);
 	});

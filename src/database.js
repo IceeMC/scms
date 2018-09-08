@@ -58,6 +58,9 @@ module.exports = {
 	getcomments(id) {
 		return db.prepare("SELECT * FROM comments WHERE articleID = :id ORDER BY id DESC").all({id});
 	},
+	deletecomment(id) {
+		db.prepare("DELETE FROM comments WHERE id = :id").run({id});
+	},
 
 	//user API
 	newuser(username, name, plainpw) {

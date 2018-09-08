@@ -56,9 +56,11 @@ app.get("/article/:id", (req, res, next) => {
 		return;
 	}
 	data.date = (new Date(data.date * 86400000)).toDateString();
+	//get comments
+	let comments = db.getcomments(req.params.id);
 	//render file with config and articles
 	if (!data.published) data.title = "UNPUBLISHED - " + data.title;
-	ejs.renderFile("templates/article.html", {...config, article: data}, (err, article) => {
+	ejs.renderFile("appviews/article.html", {...config, article: data, comments}, (err, article) => {
 		if (err) throw err;
 		res.send(article);
 	});
@@ -104,6 +106,13 @@ app.post("/edit", (req, res) => {
 		db.edit(req.body.id, req.body.title, req.body.article);
 		res.send("true");
 	} else res.status(400).send("Either the ID, article, or title are missing");
+});
+
+app.post("/deletecomment", (req, res) => {
+	if (req.body && req.body.id) {
+		db.deletecomment(req.body.id);
+		res.send("true");
+	} else res.status(400).send("You haven't sent a comment ID to delete!");
 });
 
 module.exports = app;

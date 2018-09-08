@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title><%= article.title %> - <%= htmltitle %></title>
+		<link rel="stylesheet" type="text/css" href="/css/css.css">
+	</head>
+	<body>
+		<!-- If you want a header, delete this comment and put it here
+		<header>
+		</header>
+		-->
+		<nav>
+			<ul>
+				<!-- Navigation links template
+					<li><a href="LINK">TEXT</a></li>
+				-->
+				<li><a href="/">Home</a></li>
+			</ul>
+		</nav>
+		<main>
+			<article>
+				<h1>ARTICLE PREVIEW</h1>
+				<h1><%= article.title %></h1>
+				<%= article.author %> - <%= article.date %>
+				<br>
+				<%- article.rendered %>
+			</article>
+			<h3>Commentss</h3>
+			<hr>
+			<% comments.forEach(comment => { %>
+				<h4><%= comment.name %></h4>
+				<%- comment.comment %>
+				<button onClick="delet(<%= comment.id %>)">Delete this comment</button>
+				<hr>
+			<% }); %>
+		</main>
+		<!-- If you want a footer, delete this comment and put it here
+		<footer>
+		</footer>
+		-->
+		<script>
+			function delet(id) {
+				fetch("/app/deletecomment", {
+					method: "POST",
+					body: JSON.stringify({id}),
+					credentials: "same-origin",
+					headers: {"Content-Type": "application/json"}
+				}).then(r => {
+					if (r.redirected) {
+						window.location.href = "/app/login.html";
+						return "You are not logged in";
+					}
+					return r.text();
+				}).then(r => {
+					if (r === "true") window.location.reload();
+					else alert("There was an error in deleting this comment: " + r);
+				});
+			}
+		</script>
+	</body>
+</html>
+
