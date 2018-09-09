@@ -18,6 +18,11 @@
 	</head>
 	<body>
 		<h1>Scms dashboard</h1>
+		Upload an image/images:
+		<form action="/app/upload" enctype="multipart/form-data" method="post">
+			<input type="file" name="file" multiple>
+			<input type="submit" value="Upload">
+		</form><br>
 		<a href="editor.html">New article</a>
 		<p>These are your current articles:</p>
 		<div id="articles">

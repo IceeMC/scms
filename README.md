@@ -12,6 +12,7 @@ The aim of this project is to give existing web developers a simple, light platf
 * Comments with moderator functionality
 * Drafts and article editing
 * Multiple users
+* Image uploads
 * 100% customizable everything
 
 ## Configuration
@@ -43,6 +44,8 @@ The templates, in the `src/templates` folder, are created to be easy and simple 
 
 ### serving static files
 You can place any file in the `src/static` folder to have it display on the website. For example, if you put `about.html` in the static folder, it will show as `<domain>/about.html` on your website.
+
+You can also use the web interface to upload images, which will show in the `src/static/images` folder, and will show up on your site as `<domain>/images/<image file>`. You can then include these images in your articles.
 
 ## Setup
 To set this up, follow these simple steps:

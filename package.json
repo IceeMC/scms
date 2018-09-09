@@ -15,6 +15,7 @@
     "express": "^4.16.3",
     "express-rate-limit": "^3.1.0",
     "express-session": "^1.15.6",
+    "formidable": "^1.2.1",
     "helmet": "^3.13.0",
     "marked": "^0.4.0",
     "xss": "^1.0.3"

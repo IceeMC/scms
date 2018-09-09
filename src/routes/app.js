@@ -1,7 +1,8 @@
-//Imported modules - express: make router; ejs: render HTML files; express-session: make sessions
+//Imported modules - express: make router; ejs: render HTML files; express-session: make sessions; formidable: parse an uploaded file
 let express = require("express");
 let ejs = require("ejs");
 let session = require("express-session");
+let formidable = require("formidable");
 
 //Local modules - database.js: API for the articles and users db; config.json: configuration file
 let db = require("../database.js");
@@ -113,6 +114,18 @@ app.post("/deletecomment", (req, res) => {
 		db.deletecomment(req.body.id);
 		res.send("true");
 	} else res.status(400).send("You haven't sent a comment ID to delete!");
+});
+
+app.post("/upload", (req, res) => {
+	let form = new formidable.IncomingForm();
+	form.parse(req);
+	form.on("fileBegin", (name, file) => {
+		file.path = __dirname + "/../static/images/" + file.name;
+	});
+	form.on("file", (name, file) => {
+		console.log("uploaded", file.name);
+	});
+	res.send("bye");
 });
 
 module.exports = app;
