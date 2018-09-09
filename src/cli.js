@@ -1,13 +1,13 @@
-let readline = require("readline");
-let interface = readline.createInterface({
+const readline = require("readline");
+const interface = readline.createInterface({
 	input: process.stdin,
 	output: process.stdout,
 	prompt: ""
 });
 
-let db = require("./database.js");
+const db = require("./database.js");
 
-let commands = {
+const commands = {
 	quit(rl) {
 		rl.write("Quitting...\n");
 		process.exit(0);
@@ -50,13 +50,23 @@ let commands = {
 				resolve();
 			});
 		});
+	},
+	help(rl) {
+		return new Promise(resolve => {
+			rl.write("Help - this text\nQuit - exit the program\nAdduser - make a new user\nList - list the users\nChange - change a user's password\nDelete - delete a user\n");
+			resolve();
+		});
 	}
 }
 
 function main() {
-	rl.question("Enter a command, or 'help' for help: ", command => {
+	interface.question("Enter a command, or 'help' for help: ", command => {
 		command = command.trim().toLowerCase();
-		commands[command](interface).then(() => main());
+		if (commands[command]) commands[command](interface).then(() => main());
+		else {
+			interface.write("Unknown command. Type 'help' for help\n");
+			main();
+		}
 	});
 }
 
