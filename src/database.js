@@ -1,8 +1,8 @@
-let bcrypt = require("bcrypt");
-let marked = require("marked");
-let Database = require("better-sqlite3");
-let db = new Database("./db.sqlite");
-let config = require("./config.json");
+const bcrypt = require("bcrypt");
+const marked = require("marked");
+const Database = require("better-sqlite3");
+const db = new Database("./db.sqlite");
+const config = require("./config.json");
 
 db.prepare(`CREATE TABLE IF NOT EXISTS articles
 (id INTEGER PRIMARY KEY AUTOINCREMENT, date INTEGER, title TEXT, author TEXT, article TEXT, rendered TEXT, markdown INTEGER, published INTEGER)`).run();
@@ -82,10 +82,10 @@ module.exports = {
 		if (!db.prepare("SELECT * FROM users WHERE username = :username").get({username})) throw Error(`User ${username} not found!`);
 		bcrypt.hash(plainpw, config.saltRounds || 10, (err, password) => {
 			if (err) throw err;
-			db.prepare("UPDATE users SET password = :password WHERE username = :username");
+			db.prepare("UPDATE users SET password = :password WHERE username = :username").run({username, password});
 		});
 	},
 	deleteuser(username) {
-	 db.prepare("DELETE FROM users WHERE username = :username").run({username});
+		db.prepare("DELETE FROM users WHERE username = :username").run({username});
 	}
 };

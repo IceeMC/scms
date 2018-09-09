@@ -11,7 +11,7 @@ const formidable = require("formidable");
 const db = require("../database.js");
 const config = require("../config");
 
-const app = express.Router(); //make a router
+let app = express.Router(); //make a router
 app.use(express.json());
 app.use(session({secret: config.secret}));
 

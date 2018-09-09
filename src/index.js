@@ -1,21 +1,21 @@
 //Native modules - fs: read the css dir and see which files to add; http and https: make the server listen, and with configuration options
-let fs = require("fs");
-let http = require("http");
-let https = require("https");
+const fs = require("fs");
+const http = require("http");
+const https = require("https");
 
 //Imported modules - express: serve site; ejs: render HTML files; express-session: make sessions; helmet: protect express from HTTP header vulnerabilities; xss: sanitize untrusted HTML to prevent XSS attacks
-let express = require("express");
-let ejs = require("ejs");
-let session = require("express-session");
-let helmet = require("helmet");
-let RateLimiter = require("express-rate-limit");
-let xss = require("xss");
+const express = require("express");
+const ejs = require("ejs");
+const session = require("express-session");
+const helmet = require("helmet");
+const RateLimiter = require("express-rate-limit");
+const xss = require("xss");
 
 //Local modules - database.js: API for the articles and users db; config.json: configuration file; api.js: api router
-let db = require("./database.js");
-let config = require("./config");//require without extension for js OR json
-let api = require("./routes/api.js");
-let approuter = require("./routes/app.js");
+const db = require("./database.js");
+const config = require("./config");//require without extension for js OR json
+const api = require("./routes/api.js");
+const approuter = require("./routes/app.js");
 
 let app = express();//setup express
 //set up middleware to rate limit
