@@ -14,15 +14,25 @@
 			.button {
 				color: blue;
 			}
+			#realbutton {
+				display: none;
+			}
 		</style>
 	</head>
 	<body>
 		<h1>Scms dashboard</h1>
 		Upload an image/images:
 		<form action="/app/upload" enctype="multipart/form-data" method="post">
-			<input type="file" name="file" multiple>
-			<input type="submit" value="Upload">
+			<input type="file" name="file" id="file" multiple>
+			<button type="button" onClick="upload()">Upload</button>
+			<input type="submit" id="realbutton">
 		</form><br>
+		Uploaded images:
+		<ul>
+			<% images.forEach(el => { %>
+				<li><%= el %> | <button onClick="deleteimage('<%= el %>')">Delete</button></li>
+			<% }) %>
+		</ul>
 		<a href="editor.html">New article</a>
 		<p>These are your current articles:</p>
 		<div id="articles">
@@ -37,6 +47,20 @@
 			<% }) %>
 		</div>
 		<script>
+			const images = JSON.parse(`<%-JSON.stringify(images)%>`);
+			function upload() {
+				let duplicate = false;
+				let files = Array.from(document.getElementById("file").files).map(el => el.name);
+				if (files.length < 1) {
+					alert("No files present!");
+					return;
+				}
+				files.forEach((el, i) => {
+					if (images.includes(el) || files.indexOf(el) !== i) duplicate = true;
+				});
+				if (duplicate) alert("One of the files you are trying to upload is already on the server!");
+				else document.getElementById("realbutton").click();
+			}
 			function publish(el) {
 				if (!confirm("Are you sure you would like to publish this article?")) return;
 				postid("/app/publish", el.parentNode.parentNode.id).then(() => {
@@ -53,6 +77,24 @@
 					window.location.reload();
 				}).catch(text => {
 					alert("There was a problem deleting your article: " + text);
+				});
+			}
+			function deleteimage(image) {
+				if (!confirm("Are you sure you would like to delete this image?")) return;
+				fetch("/app/deleteimage", {
+					method: "POST",
+					body: JSON.stringify({image}),
+					credentials: "same-origin",
+					headers: {"Content-Type": "application/json"}
+				}).then(r => {
+					if (r.redirected) {
+						window.location.href = "/app/login.html";
+						return "You are not logged in.";
+					}
+					return r.text();
+				}).then(r => {
+					if (r === "true") window.location.reload();
+					else alert("There was a problem deleting your image: " + text);
 				});
 			}
 			function postid(url, id) {

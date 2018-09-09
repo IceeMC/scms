@@ -1,16 +1,21 @@
+//Native modules - fs: get list of uploaded images
+const fs = require("fs");
+
 //Imported modules - express: make router; ejs: render HTML files; express-session: make sessions; formidable: parse an uploaded file
-let express = require("express");
-let ejs = require("ejs");
-let session = require("express-session");
-let formidable = require("formidable");
+const express = require("express");
+const ejs = require("ejs");
+const session = require("express-session");
+const formidable = require("formidable");
 
 //Local modules - database.js: API for the articles and users db; config.json: configuration file
-let db = require("../database.js");
-let config = require("../config");
+const db = require("../database.js");
+const config = require("../config");
 
-let app = express.Router(); //make a router
+const app = express.Router(); //make a router
 app.use(express.json());
 app.use(session({secret: config.secret}));
+
+let images = fs.readdirSync("static/images");
 
 //make an authenticator
 app.use((req, res, next) => {
@@ -41,7 +46,7 @@ app.get("/editeditor.html", (req, res) => {
 app.get("/dashboard.html", (req, res) => {
 	let articles = db.getallunpublished();
 	articles.forEach(el => el.date = (new Date(el.date * 86400000)).toDateString());
-	ejs.renderFile("appviews/dashboard.html", {articles}, (err, rendered) => {
+	ejs.renderFile("appviews/dashboard.html", {articles, images}, (err, rendered) => {
 		if (err) throw err;
 		res.send(rendered);
 	});
@@ -123,9 +128,16 @@ app.post("/upload", (req, res) => {
 		file.path = __dirname + "/../static/images/" + file.name;
 	});
 	form.on("file", (name, file) => {
-		console.log("uploaded", file.name);
+		images.push(file.name);
+		res.redirect("/app/dashboard.html");
 	});
-	res.send("bye");
 });
 
+app.post("/deleteimage", (req, res) => {
+	if (req.body && req.body.image) {
+		fs.unlinkSync(__dirname + "/../static/images/" + req.body.image);
+		images.splice(images.indexOf(req.body.image), 1);
+		res.send("true");
+	} else res.status(400).send("You haven't sent a comment ID to delete!");
+});
 module.exports = app;
