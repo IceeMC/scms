@@ -1,8 +1,7 @@
 {
 	"htmltitle": "My blog",
-	
+	"database": "sqlite3",	
 	"saltRounds": 10,
 	"secret": "testing for now man",
-
 	"port": 8080
 }

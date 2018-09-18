@@ -7,15 +7,15 @@ const ejs = require("ejs");
 const session = require("express-session");
 const formidable = require("formidable");
 
-//Local modules - database.js: API for the articles and users db; config.json: configuration file
-const db = require("../database.js");
+//Local modules - db; API for the articles and users db; config.json: configuration file
+const { db } = require("../index.js");
 const config = require("../config");
 
 let app = express.Router(); //make a router
 app.use(express.json());
 app.use(session({secret: config.secret}));
 
-let images = fs.readdirSync("static/images");
+let images = fs.readdirSync("src/static/images");
 
 //make an authenticator
 app.use((req, res, next) => {

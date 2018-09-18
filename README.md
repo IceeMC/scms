@@ -21,10 +21,53 @@ The aim of this project is to give existing web developers a simple, light platf
 | key | meaning |
 | --- | --- |
 | htmltitle | The title that goes in the <title> element on the main pages |
+| database | The default database to use. The normal one is sqlite. If it cant find the database it will revert back to sqlite.
 | saltrounds | A [bcrypt](https://npmjs.com/bcrypt) option; bcrypt is used for the user interface |
 | secret | ^ |
 | port | The port that the service runs on. If you aren't using a reverse proxy, then set this value to `80` |
 | https | An **optional** object that has three values: key, cert, and port. The port is the port that the https server should listen on (`443` for a normal https server), and the key and cert should be the path to the key and cert files of the https certificate |
+
+# Databases
+## Tips:
+- Make sure to hash passwords.
+- When inserting documents make sure to use xss module (included) to prevent xss attacks.
+For a proper example look in `src/sqlite.js`
+
+To create a database:
+1. Create a folder called databases (If no folder is present)
+2. Create a file called database/yourFileName.js (If no file is present)
+Example:
+```js
+// databases/mongo.js
+let mongo = {
+	// Initialize the database.
+	// This is called when the database is loaded.
+	async init() {},
+	// Insert, edit, delete and publish
+	insert(document, markdown) {},
+	edit(document) {},
+	delete(id) {},
+	publish(id) {},
+	// Getters
+	get(id) {},
+	getone(id) {},
+	getall(id) {},
+	getallunpublished() {},
+	getoneunpublished(id) {},
+	// Comments
+	comment(document, password) {},
+	getcomment(id) {},
+	deltecomment(id) {},
+	// Users
+	newuser() {},
+	login(username, password) {},
+	listusers() {},
+	changepw(username, password) {},
+	deleteuser(username) {}
+};
+
+module.exports = mongo;
+```
 
 ### Templates
 The templates, in the `src/templates` folder, are created to be easy and simple to configure. They use [ejs](https://ejs.co) templates; here is what is exposed:

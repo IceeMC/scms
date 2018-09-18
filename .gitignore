@@ -1,4 +1,4 @@
 node_modules
-src/db.sqlite
+db.sqlite
 src/config.js
 src/config.json

@@ -1,11 +1,10 @@
+const { db } = require("./index.js");
 const readline = require("readline");
 const interface = readline.createInterface({
 	input: process.stdin,
 	output: process.stdout,
 	prompt: ""
 });
-
-const db = require("./database.js");
 
 const commands = {
 	quit(rl) {
